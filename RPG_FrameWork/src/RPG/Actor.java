@@ -11,11 +11,9 @@ import java.util.ArrayList;
  *
  * @author Zachary Kirchens
  */
-public class Actor
-        extends GameObject {
+public class Actor extends GameObject {
 
     //Variables-----------------------------------------------------------------
-
     double health;
     double healthMax;
     String bio;

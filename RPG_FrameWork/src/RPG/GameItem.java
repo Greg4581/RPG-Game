@@ -9,17 +9,14 @@ package RPG;
  *
  * @author Zachary Kirchens
  */
-public class GameItem
-        extends GameObject {
+public class GameItem extends GameObject {
 
     //Variables
-
     String description;
     String type;
     String effect;
 
     //Constructors
-
     public GameItem() {
         super("Default Item");
         this.setType("Default");

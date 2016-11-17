@@ -11,11 +11,9 @@ import java.io.Serializable;
  *
  * @author Zachary Kirchens
  */
-public abstract class GameObject
-        implements Serializable {
+public abstract class GameObject implements Serializable {
 
     //Variables-----------------------------------------------------------------
-
     private double LocationX;
     private double LocationY;
     private String name;

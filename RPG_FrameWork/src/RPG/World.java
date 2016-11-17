@@ -11,15 +11,12 @@ import java.io.Serializable;
  *
  * @author Zachary Kirchens
  */
-public class World
-        implements Serializable {
+public class World implements Serializable {
 
     //Variables-----------------------------------------------------------------
-
     private final Area[][] world;
 
     //Constructors--------------------------------------------------------------
-
     public World() {
         world = new Area[10][10];
     }
