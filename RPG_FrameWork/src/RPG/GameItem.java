@@ -9,55 +9,57 @@ package RPG;
  *
  * @author Zachary Kirchens
  */
-public class GameItem 
-        extends GameObject
-{
+public class GameItem
+        extends GameObject {
+
     //Variables
+
     String description;
     String type;
     String effect;
+
     //Constructors
-    public GameItem()
-    {
+
+    public GameItem() {
         super("Default Item");
         this.setType("Default");
         this.setDescription("This is a default");
-        
+
     }
-    public GameItem(String sName, String sType, String sDescrip)
-    {
+
+    public GameItem(String sName, String sType, String sDescrip) {
         super(sName);
         this.setType(sType);
         this.setDescription(sDescrip);
-        
+
     }
+
     public GameItem(String sName, String sType,
-            String sDescrip, 
-            double locX, double locY)
-    {
+            String sDescrip,
+            double locX, double locY) {
         super(sName, locX, locY);
         this.setType(sType);
         this.setDescription(sDescrip);
-        
+
     }
+
     //Mutators------------------------------------------------------------------
-    public void setDescription(String sDescrib)
-    {
+
+    public final void setDescription(String sDescrib) {
         description = sDescrib;
     }
-    public void setType(String sType)
-    {
-        type=sType;
+
+    public final void setType(String sType) {
+        type = sType;
     }
-    
+
     //Accessors-----------------------------------------------------------------
-    public String getDescription()
-    {/*Returns the value in the description variable*/
+    public String getDescription() {/*Returns the value in the description variable*/
+
         return description;
     }
-    public String getType()
-    {
+
+    public String getType() {
         return type;
     }
-    
 }

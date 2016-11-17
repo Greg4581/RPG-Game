@@ -9,11 +9,9 @@ package RPG;
  *
  * @author Zachary Kirchens
  */
-public class TestClass 
-{
-    public static void main(String [] args)
-    {
-        Area a=new Area();
+public class TestClass {
+
+    public static void main(String[] args) {
+        Area a = new Area();
     }
-    
 }

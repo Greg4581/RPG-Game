@@ -12,18 +12,19 @@ import java.io.Serializable;
  * @author Zachary Kirchens
  */
 public class World
-        implements Serializable
-{
+        implements Serializable {
+
     //Variables-----------------------------------------------------------------
-    private Area[][] world;
+
+    private final Area[][] world;
+
     //Constructors--------------------------------------------------------------
-    public World()
-    {
-        world=new Area[10][10];
+
+    public World() {
+        world = new Area[10][10];
     }
-    public World(int iSizeX, int iSizeY)
-    {
-        world=new Area[iSizeX][iSizeY];
+
+    public World(int iSizeX, int iSizeY) {
+        world = new Area[iSizeX][iSizeY];
     }
-    
 }
