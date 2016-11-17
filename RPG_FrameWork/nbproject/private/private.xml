@@ -2,6 +2,15 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/F:/!STORAGE/Docs/NetBeansProjects/RPG-Framework/RPG_FrameWork/src/RPG/GameItem.java</file>
+            <file>file:/F:/!STORAGE/Docs/NetBeansProjects/RPG-Framework/RPG_FrameWork/src/RPG/Actor.java</file>
+            <file>file:/F:/!STORAGE/Docs/NetBeansProjects/RPG-Framework/RPG_FrameWork/src/RPG/World.java</file>
+            <file>file:/F:/!STORAGE/Docs/NetBeansProjects/RPG-Framework/RPG_FrameWork/src/RPG/ResourceLoader.java</file>
+            <file>file:/F:/!STORAGE/Docs/NetBeansProjects/RPG-Framework/RPG_FrameWork/src/RPG/Area.java</file>
+            <file>file:/F:/!STORAGE/Docs/NetBeansProjects/RPG-Framework/RPG_FrameWork/src/RPG/GameObject.java</file>
+            <file>file:/F:/!STORAGE/Docs/NetBeansProjects/RPG-Framework/RPG_FrameWork/src/RPG/Window.java</file>
+            <file>file:/F:/!STORAGE/Docs/NetBeansProjects/RPG-Framework/RPG_FrameWork/src/RPG/TestClass.java</file>
+        </group>
     </open-files>
 </project-private>

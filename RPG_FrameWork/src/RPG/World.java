@@ -9,19 +9,26 @@ import java.io.Serializable;
 
 /**
  *
- * @author Zachary Kirchens
+ * @author Zachary Kirchens, Gregory Salazar
  */
 public class World implements Serializable {
 
     //Variables-----------------------------------------------------------------
+    private final String name;
     private final Area[][] world;
 
     //Constructors--------------------------------------------------------------
     public World() {
+        name = "Default World";
         world = new Area[10][10];
     }
 
-    public World(int iSizeX, int iSizeY) {
+    public World(String name, int iSizeX, int iSizeY) {
+        this.name = name;
         world = new Area[iSizeX][iSizeY];
+    }
+
+    public String getName() {
+        return name;
     }
 }
