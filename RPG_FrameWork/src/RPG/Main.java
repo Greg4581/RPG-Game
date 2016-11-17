@@ -16,7 +16,7 @@ public class Main {
     
     final static ResourceManager Resource = new ResourceManager();  //create the object that will retrieve and save project resources
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         
         Window w = new Window();    //create window object
         w.setVisible(true);
@@ -26,8 +26,8 @@ public class Main {
         
         Area a = new Area();
         
-        SoundSystem.playMusic("music.wav"); //Source: https://www.youtube.com/watch?v=KagcLZSvLWo
-        SoundSystem.playSound("sword.wav"); //Source: https://www.freesound.org/people/Ceacy/sounds/2642
+        SoundSystem.playMusic("boss_music.wav"); //Source: https://www.youtube.com/watch?v=KagcLZSvLWo
+        SoundSystem.playSound("sword_hit.wav"); //Source: https://www.freesound.org/people/Ceacy/sounds/2642
         SoundSystem.printSupportedFileTypes();
     }
 }
