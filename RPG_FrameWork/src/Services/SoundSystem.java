@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package RPG;
+package Services;
 
+import static RPG.Main.Resource;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import javax.sound.sampled.*;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.sound.sampled.AudioFileFormat.Type;
+import javax.sound.sampled.*;
 
 /**
  *
@@ -18,9 +18,9 @@ import javax.sound.sampled.AudioFileFormat.Type;
 public final class SoundSystem {
 
     private static Clip activeMusic = null;
-    private static final ArrayList<Clip> activeSounds = new ArrayList();
+    private static final ConcurrentHashMap<Clip, Boolean> activeSounds = new ConcurrentHashMap<>();
 
-    private static boolean soundsPaused, musicPaused;
+    private static boolean soundsPaused, musicPaused, musicLooped;
 
     public static void playSound(String soundName) {
         playSound(soundName, false);    //sounds not looped by default
@@ -32,20 +32,20 @@ public final class SoundSystem {
             return;
         }
         try {
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(Main.Resource.loadSound(soundName)); //open an audio input stream and load sound file from resources
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(Resource.loadSound(soundName)); //open an audio input stream and load sound file from resources
             Clip clip = AudioSystem.getClip();  //get a new sound clip resource
             clip.open(audioIn); //open audio clip
-            if (looped) {   //loop if specified
+            activeSounds.put(clip, looped);  //adds each sound to the list, ordered from newest to oldest
+            if (looped) {
                 clip.loop(Clip.LOOP_CONTINUOUSLY);
             }
-            activeSounds.add(0, clip);  //adds each sound to the list, ordered from newest to oldest
             clip.start();   //play the sound
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
         }
     }
 
     public static void pauseSounds() {
-        activeSounds.stream().forEach((sound) -> {
+        activeSounds.keySet().stream().forEach((sound) -> {
             if (soundOpen(sound)) {
                 sound.stop();
             } else {
@@ -56,8 +56,12 @@ public final class SoundSystem {
     }
 
     public static void unpauseSounds() {
-        activeSounds.stream().forEach((sound) -> {
+        activeSounds.keySet().stream().forEach((sound) -> {
             if (soundOpen(sound)) {
+                if (activeSounds.get(sound)) {
+                    //redefine loop after unpausing
+                    sound.loop(Clip.LOOP_CONTINUOUSLY);
+                }
                 sound.start();
             } else {
                 activeSounds.remove(sound);
@@ -67,7 +71,7 @@ public final class SoundSystem {
     }
 
     public static void stopSounds() {
-        activeSounds.stream().forEach((sound) -> {
+        activeSounds.keySet().stream().forEach((sound) -> {
             if (soundOpen(sound)) {
                 sound.close();
             }
@@ -84,7 +88,7 @@ public final class SoundSystem {
     public static int numActiveSounds() {
         //returns the number of active sounds (paused sounds are still counted as active)
         int num = 0;
-        num = activeSounds.stream().filter((sound) -> (soundOpen(sound))).map((_item) -> 1).reduce(num, Integer::sum);
+        num = activeSounds.keySet().stream().filter((sound) -> (soundOpen(sound))).map((_item) -> 1).reduce(num, Integer::sum);
         return num;
     }
 
@@ -94,18 +98,19 @@ public final class SoundSystem {
 
     public static void playMusic(String musicName, boolean looped) {
         try {
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(Main.Resource.loadMusic(musicName)); //open an audio input stream and load music file from resources
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(Resource.loadMusic(musicName)); //open an audio input stream and load music file from resources
             Clip clip = AudioSystem.getClip();  //get a new sound clip resource
             clip.open(audioIn); //open audio clip
-            if (looped) {   //loop if specified
-                clip.loop(Clip.LOOP_CONTINUOUSLY);
-            }
+            musicLooped = looped;
             musicCheck();
             if (activeMusic != null) {
                 //stop any other music currently playing
                 stopMusic();
             }
             activeMusic = clip;
+            if (looped) {
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            }
             clip.start();   //play the music
             musicPaused = false;
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
@@ -123,6 +128,9 @@ public final class SoundSystem {
     public static void unpauseMusic() {
         musicCheck();
         if (activeMusic != null) {
+            if (musicLooped) {
+                activeMusic.loop(Clip.LOOP_CONTINUOUSLY);
+            }
             activeMusic.start();
         }
         musicPaused = false;

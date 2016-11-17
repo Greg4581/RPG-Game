@@ -5,6 +5,8 @@
  */
 package RPG;
 
+import Services.SoundSystem;
+import Services.ResourceManager;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -14,7 +16,7 @@ import java.io.IOException;
  */
 public class Main {
     
-    final static ResourceManager Resource = new ResourceManager();  //create the object that will retrieve and save project resources
+    public final static ResourceManager Resource = new ResourceManager();  //create the object that will retrieve and save project resources
 
     public static void main(String[] args) throws IOException, InterruptedException {
         
