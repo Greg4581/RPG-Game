@@ -6,7 +6,6 @@
 package Services;
 
 import static RPG.Main.Resource;
-import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.*;
@@ -27,12 +26,7 @@ public final class SoundSystem {
     }
 
     public static void playSound(String soundName, boolean looped) {
-        Clip clip = null;
-        try {
-            clip = Resource.loadSound(soundName);
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-        }
-        playSound(clip, looped);
+        playSound(Resource.loadSound(soundName), looped);
     }
 
     public static void playSound(Clip clip) {
@@ -41,11 +35,11 @@ public final class SoundSystem {
 
     public static void playSound(Clip clip, boolean looped) {
         if (clip == null || !clip.isOpen()) {
-            System.err.println("ERROR: Clip does not exist or is not open.");
+            System.err.println(SoundSystem.class.getSimpleName() + " ERROR: Clip does not exist or is not open.");
             return;
         }
         if (soundsPaused) {
-            System.err.println("ERROR: Make sure sounds are unpaused before playing a new one.");
+            System.err.println(SoundSystem.class.getSimpleName() + " ERROR: Make sure sounds are unpaused before playing a new one.");
             return;
         }
         activeSounds.put(clip, looped);  //adds each sound to the map
@@ -108,12 +102,7 @@ public final class SoundSystem {
     }
 
     public static void playMusic(String musicName, boolean looped) {
-        Clip clip = null;
-        try {
-            clip = Resource.loadMusic(musicName);
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-        }
-        playMusic(clip, looped);
+        playMusic(Resource.loadMusic(musicName), looped);
     }
 
     public static void playMusic(Clip clip) {
@@ -122,7 +111,7 @@ public final class SoundSystem {
 
     public static void playMusic(Clip clip, boolean looped) {
         if (clip == null || !clip.isOpen()) {
-            System.err.println("ERROR: Clip does not exist or is not open.");
+            System.err.println(SoundSystem.class.getSimpleName() + " ERROR: Clip does not exist or is not open.");
             return;
         }
         stopMusic();    //stop any other music currently playing

@@ -35,25 +35,35 @@ public final class ResourceManager {
         return image;
     }
 
-    public Clip loadSound(String soundName) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
+    public Clip loadSound(String soundName) {
         URL url = getClass().getClassLoader().getResource(MAIN_RESOURCE_DIR + "/Sounds/" + soundName);
         if (url == null) {
-            System.err.println("Sound file '" + soundName + "' does not exist.");
+            System.err.println(this.getClass().getSimpleName() + " ERROR: Sound file '" + soundName + "' does not exist.");
+            return null;
         }
-        AudioInputStream audioIn = AudioSystem.getAudioInputStream(url); //open an audio input stream and load sound file from resources
-        Clip clip = AudioSystem.getClip();  //get a new sound clip resource
-        clip.open(audioIn); //open audio clip
+        Clip clip = null;
+        try {
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(url); //open an audio input stream and load sound file from resources
+            clip = AudioSystem.getClip();  //get a new sound clip resource
+            clip.open(audioIn); //open audio clip
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        }
         return clip;
     }
 
-    public Clip loadMusic(String musicName) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    public Clip loadMusic(String musicName) {
         URL url = getClass().getClassLoader().getResource(MAIN_RESOURCE_DIR + "/Music/" + musicName);
         if (url == null) {
-            System.err.println("Music file '" + musicName + "' does not exist.");
+            System.err.println(this.getClass().getSimpleName() + " ERROR: Music file '" + musicName + "' does not exist.");
+            return null;
         }
-        AudioInputStream audioIn = AudioSystem.getAudioInputStream(url); //open an audio input stream and load sound file from resources
-        Clip clip = AudioSystem.getClip();  //get a new sound clip resource
-        clip.open(audioIn); //open audio clip
+        Clip clip = null;
+        try {
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(url); //open an audio input stream and load music file from resources
+            clip = AudioSystem.getClip();  //get a new music clip resource
+            clip.open(audioIn); //open audio clip
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        }
         return clip;
     }
 
@@ -65,7 +75,7 @@ public final class ResourceManager {
                 world = (World) in.readObject();
             }
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("ERROR: The world '" + worldName + "' does not exist.");
+            System.err.println(this.getClass().getSimpleName() + " ERROR: The world '" + worldName + "' does not exist.");
         }
         return world;
     }

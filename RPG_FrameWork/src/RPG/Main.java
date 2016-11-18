@@ -23,13 +23,10 @@ public class Main {
         Window w = new Window();    //create window object
         w.setVisible(true);
         BufferedImage title = Resource.loadImage("title.bmp");
-        w.getGraphics().drawImage(title, 0, 0, w);
-        World testWorld = Resource.loadWorld("Test.world");
-        
-        Area a = new Area();
+        w.getGraphics().drawImage(title, 0, 0, w);  //display title image
         
         SoundSystem.playMusic("boss_music.wav"); //Source: https://www.youtube.com/watch?v=KagcLZSvLWo
         SoundSystem.playSound("sword_hit.wav"); //Source: https://www.freesound.org/people/Ceacy/sounds/2642
-        SoundSystem.printSupportedFileTypes();
+        
     }
 }
