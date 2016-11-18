@@ -12,7 +12,8 @@ import java.util.ArrayList;
  *
  * @author Zachary Kirchens
  */
-public class Area implements Serializable {
+public class Area
+        implements Serializable {
 
     //Variables
     private String type;
@@ -25,14 +26,12 @@ public class Area implements Serializable {
     }
 
     //Mutators
-
     public void setType(String areaType) {
         type = areaType;
     }
 
     //Accessors
     //Game-Related Functions
-
     public void Affect() {
         
     }

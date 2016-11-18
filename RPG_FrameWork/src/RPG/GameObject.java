@@ -11,7 +11,8 @@ import java.io.Serializable;
  *
  * @author Zachary Kirchens
  */
-public abstract class GameObject implements Serializable {
+public abstract class GameObject
+        implements Serializable {
 
     //Variables-----------------------------------------------------------------
     private double LocationX;
@@ -38,7 +39,6 @@ public abstract class GameObject implements Serializable {
     }
 
     //Mutators------------------------------------------------------------------
-
     public final void setName(String sName) {
         name = sName;
     }

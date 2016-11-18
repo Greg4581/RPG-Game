@@ -9,7 +9,8 @@ package RPG;
  *
  * @author Zachary Kirchens
  */
-public class GameItem extends GameObject {
+public class GameItem
+        extends GameObject {
 
     //Variables
     String description;
@@ -41,7 +42,6 @@ public class GameItem extends GameObject {
     }
 
     //Mutators------------------------------------------------------------------
-
     public final void setDescription(String sDescrib) {
         description = sDescrib;
     }
