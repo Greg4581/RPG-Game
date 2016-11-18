@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 
 /**
  *
@@ -33,21 +34,27 @@ public final class ResourceManager {
         }
         return image;
     }
-    
-    public URL loadSound(String soundName) {
+
+    public Clip loadSound(String soundName) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
         URL url = getClass().getClassLoader().getResource(MAIN_RESOURCE_DIR + "/Sounds/" + soundName);
         if (url == null) {
             System.err.println("Sound file '" + soundName + "' does not exist.");
         }
-        return url;
+        AudioInputStream audioIn = AudioSystem.getAudioInputStream(url); //open an audio input stream and load sound file from resources
+        Clip clip = AudioSystem.getClip();  //get a new sound clip resource
+        clip.open(audioIn); //open audio clip
+        return clip;
     }
-    
-    public URL loadMusic(String musicName) {
+
+    public Clip loadMusic(String musicName) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
         URL url = getClass().getClassLoader().getResource(MAIN_RESOURCE_DIR + "/Music/" + musicName);
         if (url == null) {
             System.err.println("Music file '" + musicName + "' does not exist.");
         }
-        return url;
+        AudioInputStream audioIn = AudioSystem.getAudioInputStream(url); //open an audio input stream and load sound file from resources
+        Clip clip = AudioSystem.getClip();  //get a new sound clip resource
+        clip.open(audioIn); //open audio clip
+        return clip;
     }
 
     public World loadWorld(String worldName) {

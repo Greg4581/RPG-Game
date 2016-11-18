@@ -27,21 +27,32 @@ public final class SoundSystem {
     }
 
     public static void playSound(String soundName, boolean looped) {
+        Clip clip = null;
+        try {
+            clip = Resource.loadSound(soundName);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        }
+        playSound(clip, looped);
+    }
+
+    public static void playSound(Clip clip) {
+        playSound(clip, false);    //sounds not looped by default
+    }
+
+    public static void playSound(Clip clip, boolean looped) {
+        if (clip == null || !clip.isOpen()) {
+            System.err.println("ERROR: Clip does not exist or is not open.");
+            return;
+        }
         if (soundsPaused) {
             System.err.println("ERROR: Make sure sounds are unpaused before playing a new one.");
             return;
         }
-        try {
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(Resource.loadSound(soundName)); //open an audio input stream and load sound file from resources
-            Clip clip = AudioSystem.getClip();  //get a new sound clip resource
-            clip.open(audioIn); //open audio clip
-            activeSounds.put(clip, looped);  //adds each sound to the map
-            if (looped) {
-                clip.loop(Clip.LOOP_CONTINUOUSLY);
-            }
-            clip.start();   //play the sound
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        activeSounds.put(clip, looped);  //adds each sound to the map
+        if (looped) {
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
+        clip.start();   //play the sound
     }
 
     public static void pauseSounds() {
@@ -59,7 +70,7 @@ public final class SoundSystem {
         activeSounds.keySet().stream().forEach((sound) -> {
             if (soundOpen(sound)) {
                 if (activeSounds.get(sound)) {
-                    //redefine loop after unpausing
+                    //redefine looping after unpausing
                     sound.loop(Clip.LOOP_CONTINUOUSLY);
                 }
                 sound.start();
@@ -97,24 +108,31 @@ public final class SoundSystem {
     }
 
     public static void playMusic(String musicName, boolean looped) {
+        Clip clip = null;
         try {
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(Resource.loadMusic(musicName)); //open an audio input stream and load music file from resources
-            Clip clip = AudioSystem.getClip();  //get a new sound clip resource
-            clip.open(audioIn); //open audio clip
-            musicLooped = looped;
-            musicCheck();
-            if (activeMusic != null) {
-                //stop any other music currently playing
-                stopMusic();
-            }
-            activeMusic = clip;
-            if (looped) {
-                clip.loop(Clip.LOOP_CONTINUOUSLY);
-            }
-            clip.start();   //play the music
-            musicPaused = false;
+            clip = Resource.loadMusic(musicName);
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
         }
+        playMusic(clip, looped);
+    }
+
+    public static void playMusic(Clip clip) {
+        playMusic(clip, true);    //music looped by default
+    }
+
+    public static void playMusic(Clip clip, boolean looped) {
+        if (clip == null || !clip.isOpen()) {
+            System.err.println("ERROR: Clip does not exist or is not open.");
+            return;
+        }
+        stopMusic();    //stop any other music currently playing
+        activeMusic = clip;
+        musicLooped = looped;
+        if (looped) {
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        }
+        clip.start();   //play the music
+        musicPaused = false;
     }
 
     public static void pauseMusic() {
@@ -129,6 +147,7 @@ public final class SoundSystem {
         musicCheck();
         if (activeMusic != null) {
             if (musicLooped) {
+                //redefine looping after unpausing
                 activeMusic.loop(Clip.LOOP_CONTINUOUSLY);
             }
             activeMusic.start();
@@ -142,7 +161,6 @@ public final class SoundSystem {
             activeMusic.close();
             activeMusic = null;
         }
-        musicPaused = false;
     }
 
     public static boolean musicPaused() {
