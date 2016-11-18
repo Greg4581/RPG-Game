@@ -35,7 +35,7 @@ public final class SoundSystem {
             AudioInputStream audioIn = AudioSystem.getAudioInputStream(Resource.loadSound(soundName)); //open an audio input stream and load sound file from resources
             Clip clip = AudioSystem.getClip();  //get a new sound clip resource
             clip.open(audioIn); //open audio clip
-            activeSounds.put(clip, looped);  //adds each sound to the list, ordered from newest to oldest
+            activeSounds.put(clip, looped);  //adds each sound to the map
             if (looped) {
                 clip.loop(Clip.LOOP_CONTINUOUSLY);
             }
