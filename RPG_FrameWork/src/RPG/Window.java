@@ -5,11 +5,19 @@
  */
 package RPG;
 
+import static RPG.Main.player;
+import static java.awt.event.KeyEvent.*;
+import java.awt.image.BufferedImage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Gregory Salazar
  */
-public class Window extends javax.swing.JFrame {
+public class Window extends javax.swing.JFrame implements Runnable {
+
+    private Thread thread;
 
     /**
      * Creates new form Window
@@ -27,9 +35,14 @@ public class Window extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        screen = new javax.swing.JLabel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("RPG Game");
+        setBounds(new java.awt.Rectangle(0, 0, 800, 640));
+        setPreferredSize(new java.awt.Dimension(800, 640));
         setResizable(false);
+        setSize(new java.awt.Dimension(800, 640));
         addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 formMouseClicked(evt);
@@ -39,17 +52,23 @@ public class Window extends javax.swing.JFrame {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
             }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                formKeyReleased(evt);
+            }
         });
+
+        screen.setFocusable(false);
+        screen.setRequestFocusEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 800, Short.MAX_VALUE)
+            .addComponent(screen, javax.swing.GroupLayout.PREFERRED_SIZE, 800, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
+            .addComponent(screen, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -61,39 +80,57 @@ public class Window extends javax.swing.JFrame {
     }//GEN-LAST:event_formMouseClicked
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
-        //on key press
-        System.out.println("Key has been pressed");
+        //on key pressed
+        switch (evt.getKeyCode()) {
+            case VK_A:  //left
+                player.faceDir(Player.LEFT);
+                break;
+            case VK_D:  //right
+                player.faceDir(Player.RIGHT);
+                break;
+            case VK_W:  //up
+                player.faceDir(Player.UP);
+                break;
+            case VK_S:  //down
+                player.faceDir(Player.DOWN);
+                break;
+            default:
+                return;
+        }
+        player.move();
     }//GEN-LAST:event_formKeyPressed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Window.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        
-        //</editor-fold>
+    private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
+        //on key released
+    }//GEN-LAST:event_formKeyReleased
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new Window().setVisible(true);
-        });
+    public void renderWorld() {
+        BufferedImage world = Main.getWorldImage();
+        synchronized (world) {
+            screen.getGraphics().drawImage(world, 0, 0, null);
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel screen;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void run() {
+        while (true) {
+            renderWorld();
+            try {
+                Thread.sleep(1000 / Main.SCREEN_FPS);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public void start() {
+        if (thread == null) {
+            thread = new Thread(this, "Screen Rendering");
+            thread.start();
+        }
+    }
 }
