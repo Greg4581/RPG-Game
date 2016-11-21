@@ -76,7 +76,7 @@ public class Window extends javax.swing.JFrame implements Runnable {
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
         //on mouse click
-        System.out.println("Mouse has been clicked");
+        start();
     }//GEN-LAST:event_formMouseClicked
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed

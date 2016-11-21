@@ -5,34 +5,23 @@
  */
 package RPG;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
- * @author Zachary Kirchens
+ * @author Zachary Kirchens, Gregory Salazar
  */
-public class Area
-        implements Serializable {
+public class Area {
 
     //Variables
-    private String type;
-    private ArrayList<Actor> actorList;
-    private ArrayList<GameItem> itemList;
-
+    private final int[][] tiles;    //first layer
+    private final List<GameObject> objects; //second layer
+    private final String[] music = new String[]{};
+    
     //Constructors
-    public Area() {
-        
-    }
-
-    //Mutators
-    public void setType(String areaType) {
-        type = areaType;
-    }
-
-    //Accessors
-    //Game-Related Functions
-    public void Affect() {
-        
+    public Area(String name, int sizeX, int sizeY) {
+        tiles = new int[sizeX][sizeY];
+        objects = new ArrayList<>();
     }
 }

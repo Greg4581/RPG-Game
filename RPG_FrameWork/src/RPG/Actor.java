@@ -191,7 +191,7 @@ public class Actor
         currentAnimation.start();
 
         if (!canMove()) {
-            SoundSystem.playSound("collision.wav");    //play collision sound
+            SoundSystem.playSound("collision.wav");    //Source: https://www.freesound.org/people/timgormly/sounds/170141/
             moving = false;
             return;
         }

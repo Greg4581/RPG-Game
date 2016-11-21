@@ -6,7 +6,6 @@
 package RPG;
 
 import Animation.Animation;
-import Animation.Sprite;
 import Services.SoundSystem;
 import Services.ResourceManager;
 import java.awt.Color;
@@ -30,6 +29,7 @@ public class Main {
     public final static int PHYSICS_FPS = 30;  //frames per second for the physics engine
 
     private static BufferedImage worldImage;
+    private static Area world;
     static Player player;
 
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -41,8 +41,12 @@ public class Main {
         worldImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
         worldImage.createGraphics().setColor(Color.BLACK);
 
-        SoundSystem.playMusic("boss_music.wav"); //Source: https://www.youtube.com/watch?v=KagcLZSvLWo
-        SoundSystem.playSound("sword_hit.wav"); //Source: https://www.freesound.org/people/Ceacy/sounds/2642
+        SoundSystem.initialize(new String[]{
+            "techno.wav",   //Source: https://www.freesound.org/people/FoolBoyMedia/sounds/242550/
+            "boss_music.wav",    //Source: https://www.youtube.com/watch?v=KagcLZSvLWo/
+        });
+        //SoundSystem.playSound("sword_hit.wav"); //Source: https://www.freesound.org/people/Ceacy/sounds/2642/
+        SoundSystem.printPlaylist();
 
         player = new Player("Player1");
         player.setLocationX(10);
@@ -51,10 +55,8 @@ public class Main {
          p.giveXp(p.getXpToNextLvl());
          }*/
 
-        w.start();
-
         while (true) {
-            renderWorldImage();
+            processWorld();
             Thread.sleep(1000 / PHYSICS_FPS);
         }
     }
@@ -63,7 +65,7 @@ public class Main {
         return worldImage;
     }
 
-    public static void renderWorldImage() {
+    public static void processWorld() {
 
         BufferedImage world = getWorldImage();
 
@@ -75,7 +77,6 @@ public class Main {
             //render background tiles
             int numTilesX = WIDTH / 32;
             int numTilesY = HEIGHT / 32;
-
             for (int tileX = 0; tileX < numTilesX; tileX++) {
                 for (int tileY = 0; tileY < numTilesY; tileY++) {
                     g.drawImage(Tile.getImage(Tile.GRASS), tileX * 32, tileY * 32, null);
@@ -84,11 +85,10 @@ public class Main {
 
             //render game objects
             List objects = GameObject.getInstances();
-            OUTER:
             for (Iterator it = objects.iterator(); it.hasNext();) {
                 GameObject obj = (GameObject) it.next();
                 if (obj == null) {
-                    break OUTER;
+                    break;
                 }
                 if (obj instanceof Actor) {
                     Actor actor = (Actor) obj;
@@ -100,11 +100,10 @@ public class Main {
                     } else {
                         sprite = actor.getCurrentSprite();
                     }
-                    System.out.println(ani == null);
                     //get position in pixels
                     int posX = (int) actor.getLocX() * Tile.SIZE + actor.getOffsetX();
                     int posY = (int) actor.getLocY() * Tile.SIZE + actor.getOffsetY();
-                    g.drawImage(sprite, posX , posY , null);
+                    g.drawImage(sprite, posX, posY, null);
                 }
             }
         }
