@@ -15,13 +15,13 @@ import java.util.List;
  */
 public class Animation {
 
-    private int frameCount = 0;                 // Counts ticks for change
-    private int frameDelay;                 // frame delay 1-12 (You will have to play around with this)
-    private int currentFrame = 0;               // animations current frame
-    private final int animationDirection = 1;         // animation direction (i.e counting forward or backward)
-    private final int totalFrames;                // total amount of frames for your animation
+    private int frameCount = 0; //keeps track of ticks
+    private int frameDelay; //determines speed of animation (lower = faster, larger = slower)
+    private int currentFrame = 0;   //current frame of the animation
+    private final int animationDirection = 1;   //1 = forward, -1 = backward
+    private final int totalFrames;  //total number of frames in the animation
 
-    private boolean stopped = true;                // has animations stopped
+    private boolean stopped = true; //if stopped
 
     private final List<Frame> frames = new ArrayList<>();    // Arraylist of frames 
 

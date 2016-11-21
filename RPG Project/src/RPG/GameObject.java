@@ -18,26 +18,28 @@ public abstract class GameObject
 
     //Variables-----------------------------------------------------------------
     private final static List<GameObject> instances = new ArrayList<>();    //should keep track of all created game objects until removal or death
-    boolean collidable;
-    private double LocationX;
-    private double LocationY;
-    //position offset values that the world renderer considers when rending the object
-    private int offsetX;
-    private int offsetY;
+    boolean collidable, stationary;
+    private int posX;
+    private int posY;
+    
+    //precise position offset values that the world renderer considers when rending the object
+    private double offsetX;
+    private double offsetY;
+    
     private String name;
 
     //Constructors--------------------------------------------------------------
     public GameObject(String sName) {
         this.setName(sName);
-        this.setLocationX(0.0);
-        this.setLocationY(0.0);
+        this.setPosX(0);
+        this.setPosY(0);
         instances.add(this);
     }
 
-    public GameObject(String sName, double dLocX, double sLocY) {
+    public GameObject(String sName, int x, int y) {
         this.setName(sName);
-        this.setLocationX(dLocX);
-        this.setLocationY(sLocY);
+        this.setPosX(x);
+        this.setPosY(y);
         instances.add(this);
     }
 
@@ -51,20 +53,20 @@ public abstract class GameObject
         name = sName;
     }
 
-    public final void setLocationX(double dLocX) {
-        LocationX = dLocX;
+    public final void setPosX(int x) {
+        posX = x;
     }
 
-    public final void setLocationY(double dLocY) {
-        LocationY = dLocY;
+    public final void setPosY(int y) {
+        posY = y;
     }
 
-    public void setOffsetX(int offset) {
-        offsetX = offset;
+    public void setOffsetX(double offset) {
+        offsetX = Math.signum(offset) * Math.min(Math.abs(offset), Tile.SIZE);
     }
 
-    public void setOffsetY(int offset) {
-        offsetY = offset;
+    public void setOffsetY(double offset) {
+        offsetY = Math.signum(offset) * Math.min(Math.abs(offset), Tile.SIZE);
     }
 
     //Accessors-----------------------------------------------------------------
@@ -77,19 +79,19 @@ public abstract class GameObject
         return name;
     }
 
-    public double getLocX() {
-        return LocationX;
+    public int getPosX() {
+        return posX;
     }
 
-    public double getLocY() {
-        return LocationY;
+    public int getPosY() {
+        return posY;
     }
 
-    public int getOffsetX() {
+    public double getOffsetX() {
         return offsetX;
     }
 
-    public int getOffsetY() {
+    public double getOffsetY() {
         return offsetY;
     }
 }

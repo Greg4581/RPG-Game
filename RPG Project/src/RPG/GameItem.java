@@ -33,11 +33,11 @@ public class GameItem
     }
 
     public GameItem(String sName, String sType,
-            String sDescrip,
-            double locX, double locY) {
-        super(sName, locX, locY);
+            String sDesc,
+            int x, int y) {
+        super(sName, x, y);
         this.setType(sType);
-        this.setDescription(sDescrip);
+        this.setDescription(sDesc);
 
     }
 

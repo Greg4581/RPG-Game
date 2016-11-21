@@ -11,12 +11,9 @@ import Services.ResourceManager;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -54,16 +51,27 @@ public class Main {
         SoundSystem.printPlaylist();
 
         player = new Player("Player1");
-        player.setLocationX(10);
-        player.setLocationY(10);
+        player.setPosX(10);
+        player.setPosY(10);
+
         /*while (p.getLevel() < Player.MAX_LEVEL) {
          p.giveXp(p.getXpToNextLvl());
          }*/
+        int[][] tiles = new int[20][20];
+        for (int[] tile : tiles) {
+            for (int tileY = 0; tileY < tiles[0].length; tileY++) {
+                tile[tileY] = Tile.GRASS;
+            }
+        }
+        world = new Area("Test Area", tiles, new ArrayList<>(), new String[]{}, player);
+
         worldImage.createGraphics();
         while (true) {
+            System.out.println(player.getPosX() + ", " + player.getPosY());
             if (!paused) {
                 synchronized (worldImage) {
-                    processWorld();
+                    world.tick();
+                    renderWorld();
                 }
             }
             Thread.sleep(1000 / PHYSICS_FPS);
@@ -86,23 +94,22 @@ public class Main {
         }
     }
 
-    public static void processWorld() {
+    public static void renderWorld() {
 
         Graphics g = worldImage.getGraphics();
         g.fillRect(0, 0, WIDTH, WIDTH); //clear previous world image
 
         //render background tiles
-        int numTilesX = WIDTH / 32;
-        int numTilesY = HEIGHT / 32;
-        for (int tileX = 0; tileX < numTilesX; tileX++) {
-            for (int tileY = 0; tileY < numTilesY; tileY++) {
-                g.drawImage(Tile.getImage(Tile.GRASS), tileX * 32, tileY * 32, null);
+        for (int tileX = 0; tileX < world.getSizeX(); tileX++) {
+            for (int tileY = 0; tileY < world.getSizeY(); tileY++) {
+                g.drawImage(Tile.getImage(world.getTile(tileX, tileY)), tileX * 32, tileY * 32, null);
             }
         }
 
         //render game objects
-        List objects = GameObject.getInstances();
-        for (Iterator it = objects.iterator(); it.hasNext();) {
+        List entities = world.getAllEntities();
+        entities.add(player);
+        for (Iterator it = entities.iterator(); it.hasNext();) {
             GameObject obj = (GameObject) it.next();
             if (obj == null) {
                 break;
@@ -112,14 +119,13 @@ public class Main {
                 Animation ani = actor.getCurrentAnimation();
                 BufferedImage sprite;
                 if (ani != null) {
-                    ani.update();
                     sprite = ani.getSprite();
                 } else {
                     sprite = actor.getCurrentSprite();
                 }
                 //get position in pixels
-                int posX = (int) actor.getLocX() * Tile.SIZE + actor.getOffsetX();
-                int posY = (int) actor.getLocY() * Tile.SIZE + actor.getOffsetY();
+                int posX = (int) (actor.getPosX() * Tile.SIZE + actor.getOffsetX());
+                int posY = (int) (actor.getPosY() * Tile.SIZE + actor.getOffsetY());
                 g.drawImage(sprite, posX, posY, null);
             }
         }

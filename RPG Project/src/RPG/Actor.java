@@ -38,8 +38,7 @@ public class Actor
     ArrayList<GameItem> inventory;
     int xp = 0;
     int level = 1;
-    boolean isAlive;
-    boolean moving;
+    boolean isAlive, isMoving;
 
     int facing;
 
@@ -50,7 +49,7 @@ public class Actor
 
         maxHealth = 100;
         health = maxHealth;
-        walkSpeed = 2.0;
+        walkSpeed = 3.0;
         isAlive = true;
         facing = DOWN;
 
@@ -71,10 +70,11 @@ public class Actor
         };
 
         //create animation objects
-        walkLeft = new Animation(walkingLeft, 3);
-        walkRight = new Animation(walkingRight, 3);
-        walkUp = new Animation(walkingUp, 3);
-        walkDown = new Animation(walkingDown, 3);
+        int frameDelay = (int) Math.max(1, (double) Main.PHYSICS_FPS / (walkSpeed * 10));
+        walkLeft = new Animation(walkingLeft, frameDelay);
+        walkRight = new Animation(walkingRight, frameDelay);
+        walkUp = new Animation(walkingUp, frameDelay);
+        walkDown = new Animation(walkingDown, frameDelay);
     }
 
     //Mutators------------------------------------------------------------------
@@ -155,6 +155,30 @@ public class Actor
         return currentAnimation;
     }
 
+    public void updateAnimation() {
+        if (currentAnimation != null) {
+            currentAnimation.start();
+            currentAnimation.update();
+        }
+        if (isMoving) {
+            switch (facing) {
+                case LEFT:
+                    currentAnimation = walkLeft;
+                    return;
+                case RIGHT:
+                    currentAnimation = walkRight;
+                    return;
+                case UP:
+                    currentAnimation = walkUp;
+                    return;
+                case DOWN:
+                    currentAnimation = walkDown;
+            }
+        } else {
+            currentAnimation = null;
+        }
+    }
+
     //Actor movement functions--------------------------------------------------
     public void faceDir(int dir) {
         //makes the actor look in the specified direction
@@ -164,53 +188,24 @@ public class Actor
         facing = dir;
     }
 
-    public boolean canMove() {
-        //returns true if the tile in front of this actor is unobstructed
-        return true;    //not yet coded
-    }
-
-    public void move() {
-        //moves the actor one tile in the direction it's facing
-
-        moving = true;
-
+    public int getDirX() {
         switch (facing) {
             case LEFT:
-                currentAnimation = walkLeft;
-                break;
+                return -1;
             case RIGHT:
-                currentAnimation = walkRight;
-                break;
-            case UP:
-                currentAnimation = walkUp;
-                break;
-            case DOWN:
-                currentAnimation = walkDown;
-                break;
+                return 1;
         }
-        currentAnimation.start();
+        return 0;
+    }
 
-        if (!canMove()) {
-            SoundSystem.playSound("collision.wav");    //Source: https://www.freesound.org/people/timgormly/sounds/170141/
-            moving = false;
-            return;
+    public int getDirY() {
+        switch (facing) {
+            case UP:
+                return -1;
+            case DOWN:
+                return 1;
         }
-        int next;
-        if (facing == LEFT) {
-            next = -1;
-        } else {
-            next = 1;
-        }
-        if ((facing == LEFT || facing == RIGHT) && this.getOffsetX() < Tile.SIZE) {
-            this.setOffsetX(this.getOffsetX() + (int) (walkSpeed * (double) Tile.SIZE / Main.PHYSICS_FPS) * next);
-        } else {
-            this.setLocationX(this.getLocX() + next);
-            this.setOffsetX(0);
-            this.setOffsetY(0);
-            currentAnimation.reset();
-            currentAnimation = null;
-            moving = false;
-        }
+        return 0;
     }
 
     public String Affect(Effect eff, double dStrength) {

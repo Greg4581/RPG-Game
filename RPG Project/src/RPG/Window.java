@@ -18,6 +18,8 @@ public class Window extends javax.swing.JFrame implements Runnable {
 
     private Thread thread;
 
+    public boolean keyUp, keyDown, keyLeft, keyRight;
+
     /**
      * Creates new form Window
      */
@@ -33,8 +35,6 @@ public class Window extends javax.swing.JFrame implements Runnable {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
-        screen = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("RPG Game");
@@ -63,18 +63,15 @@ public class Window extends javax.swing.JFrame implements Runnable {
             }
         });
 
-        screen.setFocusable(false);
-        screen.setRequestFocusEnabled(false);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(screen, javax.swing.GroupLayout.PREFERRED_SIZE, 800, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(0, 800, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(screen, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(0, 640, Short.MAX_VALUE)
         );
 
         pack();
@@ -87,27 +84,12 @@ public class Window extends javax.swing.JFrame implements Runnable {
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         //on key pressed
-        switch (evt.getKeyCode()) {
-            case VK_A:  //left
-                player.faceDir(Player.LEFT);
-                break;
-            case VK_D:  //right
-                player.faceDir(Player.RIGHT);
-                break;
-            case VK_W:  //up
-                player.faceDir(Player.UP);
-                break;
-            case VK_S:  //down
-                player.faceDir(Player.DOWN);
-                break;
-            default:
-                return;
-        }
-        player.move();
+        processKeyInput(evt.getKeyCode(), true);
     }//GEN-LAST:event_formKeyPressed
 
     private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
         //on key released
+        processKeyInput(evt.getKeyCode(), false);
     }//GEN-LAST:event_formKeyReleased
 
     private void formWindowDeiconified(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowDeiconified
@@ -121,8 +103,38 @@ public class Window extends javax.swing.JFrame implements Runnable {
     }//GEN-LAST:event_formWindowIconified
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel screen;
     // End of variables declaration//GEN-END:variables
+    public synchronized void processKeyInput(int keyCode, boolean pressed) {
+        switch (keyCode) {
+            case VK_A:  //left
+                keyLeft = pressed;
+                if (pressed) {
+                    player.faceDir(Player.LEFT);
+                }
+                break;
+            case VK_D:  //right
+                keyRight = pressed;
+                if (pressed) {
+                    player.faceDir(Player.RIGHT);
+                }
+                break;
+            case VK_W:  //up
+                keyUp = pressed;
+                if (pressed) {
+                    player.faceDir(Player.UP);
+                }
+                break;
+            case VK_S:  //down
+                keyDown = pressed;
+                if (pressed) {
+                    player.faceDir(Player.DOWN);
+                }
+                break;
+            default:
+                return;
+        }
+        player.isMoving = !(keyUp == keyDown && keyLeft == keyRight);
+    }
 
     @Override
     public void run() {
