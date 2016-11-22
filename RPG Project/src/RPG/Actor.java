@@ -7,7 +7,6 @@ package RPG;
 
 import Animation.Animation;
 import Animation.Sprite;
-import Services.SoundSystem;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -31,16 +30,17 @@ public class Actor
     public final static int DOWN = 0, LEFT = 1, RIGHT = 2, UP = 3;
 
     //Other Variables-----------------------------------------------------------------
-    double health;
-    double maxHealth;
-    double walkSpeed;   //walk speed in tiles/sec
+    private double health;
+    private double maxHealth;
+    private double movementSpeed;   //walk speed in tiles/sec
     String desc;
     ArrayList<GameItem> inventory;
     int xp = 0;
     int level = 1;
-    boolean isAlive, isMoving;
+    private boolean isAlive, isMoving, isAnimating, isRunning;
 
-    int facing;
+    private int facing;
+    int wantToFace;
 
     //Constructors--------------------------------------------------------------
     public Actor(String sName, String spriteFileName) {
@@ -49,7 +49,7 @@ public class Actor
 
         maxHealth = 100;
         health = maxHealth;
-        walkSpeed = 3.0;
+        movementSpeed = 3.0;    //base movement speed
         isAlive = true;
         facing = DOWN;
 
@@ -70,7 +70,7 @@ public class Actor
         };
 
         //create animation objects
-        int frameDelay = (int) Math.max(1, (double) Main.PHYSICS_FPS / (walkSpeed * 10));
+        int frameDelay = (int) Math.max(1, (double) Main.PHYSICS_TPS / (this.getMovementSpeed() * 10));
         walkLeft = new Animation(walkingLeft, frameDelay);
         walkRight = new Animation(walkingRight, frameDelay);
         walkUp = new Animation(walkingUp, frameDelay);
@@ -160,7 +160,7 @@ public class Actor
             currentAnimation.start();
             currentAnimation.update();
         }
-        if (isMoving) {
+        if (isMoving || isAnimating) {
             switch (facing) {
                 case LEFT:
                     currentAnimation = walkLeft;
@@ -180,15 +180,28 @@ public class Actor
     }
 
     //Actor movement functions--------------------------------------------------
-    public void faceDir(int dir) {
-        //makes the actor look in the specified direction
+    public void setFacingDirection(int dir) {
+        //makes the actor look in the specified direction if able to
         if (dir < 0 || dir > 3) {
             return;
         }
-        facing = dir;
+        wantToFace = dir;
+        if (!isAnimating) {
+            facing = dir;
+        }
+    }
+
+    public int getFacingDirection() {
+        if (!isAnimating && facing != wantToFace) {
+            facing = wantToFace;
+        }
+        return facing;
     }
 
     public int getDirX() {
+        if (!isAnimating && facing != wantToFace) {
+            facing = wantToFace;
+        }
         switch (facing) {
             case LEFT:
                 return -1;
@@ -199,6 +212,9 @@ public class Actor
     }
 
     public int getDirY() {
+        if (!isAnimating && facing != wantToFace) {
+            facing = wantToFace;
+        }
         switch (facing) {
             case UP:
                 return -1;
@@ -249,5 +265,40 @@ public class Actor
             }
         }
         return "";
+    }
+
+    public void setMoving(boolean b) {
+        isMoving = b;
+    }
+
+    public boolean isMoving() {
+        return isMoving;
+    }
+
+    public void setRunning(boolean b) {
+        isRunning = b;
+    }
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public void setMovementSpeed(double d) {
+        movementSpeed = d;
+    }
+
+    public final double getMovementSpeed() {
+        if (isRunning) {
+            return movementSpeed * 3;
+        }
+        return movementSpeed;
+    }
+
+    public void setAnimating(boolean b) {
+        isAnimating = b;
+    }
+
+    public boolean isAnimating() {
+        return isAnimating;
     }
 }

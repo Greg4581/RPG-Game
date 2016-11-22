@@ -46,6 +46,13 @@ public final class ResourceManager {
             AudioInputStream audioIn = AudioSystem.getAudioInputStream(url); //open an audio input stream and load sound file from resources
             clip = AudioSystem.getClip();  //get a new sound clip resource
             clip.open(audioIn); //open audio clip
+            //kill thread after processing clip
+            clip.addLineListener((LineEvent evt) -> {
+                if (evt.getType() == LineEvent.Type.STOP) {
+                    evt.getLine().close();
+                }
+            }
+            );
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
         }
         return clip;

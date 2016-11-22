@@ -7,6 +7,8 @@ package RPG;
 
 import Animation.Sprite;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -24,9 +26,21 @@ public abstract class Tile {
             SAND = 4,
             WATER = 5;
     
-    private final static Sprite tiles = new Sprite("tiles.png");
+    private final static Sprite TILES = new Sprite("tiles.png");
 
     public static BufferedImage getImage(int type) {
-        return tiles.getSprite(type % 10, type / 10);
+        return TILES.getSprite(type % 10, type / 10);
+    }
+    
+    public static List<BufferedImage> getImages() {
+        List<BufferedImage> images = new ArrayList<>();
+        BufferedImage image = getImage(VOID);
+        int index = 0;
+        while (image != null) {
+            index++;
+            images.add(image);
+            image = getImage(index);
+        }
+        return images;
     }
 }

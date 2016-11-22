@@ -40,7 +40,7 @@ public final class SoundSystem implements Runnable {
         playSound(clip, false);    //sounds not looped by default
     }
 
-    public static void playSound(Clip clip, boolean looped) {
+    public static synchronized void playSound(Clip clip, boolean looped) {
         if (!isValid(clip)) {
             return;
         }
@@ -55,7 +55,7 @@ public final class SoundSystem implements Runnable {
         clip.start();   //play the sound
     }
 
-    public static void pauseSounds() {
+    public static synchronized void pauseSounds() {
         soundsPaused = true;
         activeSounds.keySet().stream().forEach((sound) -> {
             if (!soundDone(sound)) {
@@ -66,7 +66,7 @@ public final class SoundSystem implements Runnable {
         });
     }
 
-    public static void unPauseSounds() {
+    public static synchronized void unPauseSounds() {
         activeSounds.keySet().stream().forEach((sound) -> {
             if (!soundDone(sound)) {
                 if (activeSounds.get(sound)) {
@@ -81,9 +81,10 @@ public final class SoundSystem implements Runnable {
         soundsPaused = false;
     }
 
-    public static void stopSounds() {
+    public static synchronized void stopSounds() {
         activeSounds.keySet().stream().forEach((sound) -> {
             if (!soundDone(sound)) {
+                sound.drain();
                 sound.close();
             }
         });
@@ -96,7 +97,7 @@ public final class SoundSystem implements Runnable {
         return soundsPaused;
     }
 
-    public static int numActiveSounds() {
+    public static synchronized int numActiveSounds() {
         //returns the number of active sounds (paused sounds are still counted as active)
         int num = 0;
         num = activeSounds.keySet().stream().filter((sound) -> (!soundDone(sound))).map((_item) -> 1).reduce(num, Integer::sum);
@@ -128,6 +129,7 @@ public final class SoundSystem implements Runnable {
 
     public static synchronized void stopMusic() {
         if (!musicDone()) {
+            currentTrack.drain();
             currentTrack.close();
         }
         currentTrack = null;
@@ -170,12 +172,12 @@ public final class SoundSystem implements Runnable {
         });
     }
 
-    public static synchronized List<String> getPlaylist() {
+    public static List<String> getPlaylist() {
         //returns the playlist
         return playlist;
     }
 
-    public static synchronized String getCurrentTrack() {
+    public static String getCurrentTrack() {
         //returns the current track
         return playlist.get(currentTrackNum);
     }
@@ -225,6 +227,7 @@ public final class SoundSystem implements Runnable {
             return;
         }
         thread = new Thread(new SoundSystem(), "SoundSystem");
+        thread.setPriority(1);
         for (String track : playlist) {
             addToPlaylist(track);
         }

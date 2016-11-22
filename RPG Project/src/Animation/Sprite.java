@@ -7,6 +7,7 @@ package Animation;
 
 import static RPG.Main.Resource;
 import java.awt.image.BufferedImage;
+import java.awt.image.RasterFormatException;
 
 /**
  *
@@ -14,9 +15,9 @@ import java.awt.image.BufferedImage;
  */
 public class Sprite {
 
-    private BufferedImage spriteSheet;
     private final int TILE_SIZE = 32;
-    
+    private BufferedImage spriteSheet;
+
     public Sprite(String fileName) {
         loadSpriteSheet(fileName);
     }
@@ -24,18 +25,20 @@ public class Sprite {
     public final void loadSpriteSheet(String fileName) {
         spriteSheet = Resource.loadImage(fileName);
     }
-    
+
     public BufferedImage getSprite() {
         return spriteSheet;
     }
 
     public BufferedImage getSprite(int xGrid, int yGrid) {
-        
         if (spriteSheet == null) {
             System.err.println(Sprite.class.getSimpleName() + " ERROR: No sprite sheet loaded!");
             return null;
         }
-        
-        return spriteSheet.getSubimage(xGrid * TILE_SIZE, yGrid * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        try {
+            return spriteSheet.getSubimage(xGrid * TILE_SIZE, yGrid * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        } catch (RasterFormatException e) {
+            return null;
+        }
     }
 }

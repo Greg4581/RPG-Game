@@ -5,7 +5,6 @@
  */
 package RPG;
 
-import Animation.Animation;
 import Services.SoundSystem;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,34 +37,40 @@ public class Area {
     public synchronized void tick() {
         //processes the whole area by moving actors where they should be in the next frame
         //and also handles events and interactions between actors and game objects
-
+        
         //start with player
-        if (player.isMoving) {
-            double C = player.walkSpeed * (double) Tile.SIZE / Main.PHYSICS_FPS;
-            if (Math.abs(player.getOffsetX()) > 5 || Math.abs(player.getOffsetY()) > 5) {
+        if (player.isMoving() || player.isAnimating()) {
+            if (player.isAnimating()) {
                 //change offset values only
-                double offsetX = player.getOffsetX();
-                double offsetY = player.getOffsetY();
-                player.setOffsetX(offsetX + player.getDirX() * C);
-                player.setOffsetY(offsetY + player.getDirY() * C);
-                if ((int) Math.abs(player.getOffsetX()) == 0) {
+                int offsetX = player.getOffsetX();
+                int offsetY = player.getOffsetY();
+                double C = player.getMovementSpeed() * (double) Tile.SIZE / Main.PHYSICS_TPS;
+                player.setOffsetX((int) (offsetX + player.getDirX() * C));
+                player.setOffsetY((int) (offsetY + player.getDirY() * C));
+                offsetX = Math.abs(player.getOffsetX());
+                offsetY = Math.abs(player.getOffsetY());
+                if (offsetX < C || offsetX > Tile.SIZE - C) {
                     player.setOffsetX(0);
                 }
-                if ((int) Math.abs(player.getOffsetY()) == 0) {
+                if (offsetY < C || offsetY > Tile.SIZE - C) {
                     player.setOffsetY(0);
+                }
+                if (player.getOffsetX() == 0 && player.getOffsetY() == 0) {
+                    player.setAnimating(false);
                 }
             } else {
                 int newPosX = player.getPosX() + player.getDirX();
                 int newPosY = player.getPosY() + player.getDirY();
-                if (getEntity(newPosX, newPosY) == null) {
+                if (getEntity(newPosX, newPosY) == null && getTile(newPosX, newPosY) != Tile.VOID) {
                     //move to new spot
                     player.setPosX(newPosX);
                     player.setPosY(newPosY);
-                    player.setOffsetX(-player.getDirX() * (Tile.SIZE - 1));
-                    player.setOffsetY(-player.getDirY() * (Tile.SIZE - 1));
+                    player.setOffsetX(-player.getDirX() * Tile.SIZE);
+                    player.setOffsetY(-player.getDirY() * Tile.SIZE);
+                    player.setAnimating(true);
                 } else {
                     //can't move there
-                    SoundSystem.playSound("collision.wav");    //Source: https://www.freesound.org/people/timgormly/sounds/170141/
+                    //SoundSystem.playSound("collision.wav");    //Source: https://www.freesound.org/people/timgormly/sounds/170141/
                 }
             }
         }
@@ -81,7 +86,11 @@ public class Area {
     }
 
     public int getTile(int x, int y) {
-        return tiles[x][y];
+        try {
+            return tiles[x][y];
+        } catch (ArrayIndexOutOfBoundsException e) {
+        }
+        return 0;
     }
 
     public synchronized int setTile(int x, int y, int tile) {

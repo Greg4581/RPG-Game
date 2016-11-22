@@ -23,8 +23,8 @@ public abstract class GameObject
     private int posY;
     
     //precise position offset values that the world renderer considers when rending the object
-    private double offsetX;
-    private double offsetY;
+    private int offsetX;
+    private int offsetY;
     
     private String name;
 
@@ -61,12 +61,12 @@ public abstract class GameObject
         posY = y;
     }
 
-    public void setOffsetX(double offset) {
-        offsetX = Math.signum(offset) * Math.min(Math.abs(offset), Tile.SIZE);
+    public void setOffsetX(int offset) {
+        offsetX = (int) (Math.signum(offset) * Math.min(Math.abs(offset), Tile.SIZE));
     }
 
-    public void setOffsetY(double offset) {
-        offsetY = Math.signum(offset) * Math.min(Math.abs(offset), Tile.SIZE);
+    public void setOffsetY(int offset) {
+        offsetY = (int) (Math.signum(offset) * Math.min(Math.abs(offset), Tile.SIZE));
     }
 
     //Accessors-----------------------------------------------------------------
@@ -87,11 +87,11 @@ public abstract class GameObject
         return posY;
     }
 
-    public double getOffsetX() {
+    public int getOffsetX() {
         return offsetX;
     }
 
-    public double getOffsetY() {
+    public int getOffsetY() {
         return offsetY;
     }
 }

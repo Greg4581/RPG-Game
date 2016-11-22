@@ -5,7 +5,9 @@
  */
 package RPG;
 
-import static RPG.Main.player;
+import static RPG.Main.PLAYER;
+import java.awt.Color;
+import java.awt.Font;
 import static java.awt.event.KeyEvent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,7 +20,8 @@ public class Window extends javax.swing.JFrame implements Runnable {
 
     private Thread thread;
 
-    public boolean keyUp, keyDown, keyLeft, keyRight;
+    private boolean keyUp, keyDown, keyLeft, keyRight;
+    private int lastKeyPressed, dir;
 
     /**
      * Creates new form Window
@@ -94,54 +97,85 @@ public class Window extends javax.swing.JFrame implements Runnable {
 
     private void formWindowDeiconified(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowDeiconified
         //unpause the game when un-minimized
-        Main.unPause();
+        World.unPause();
     }//GEN-LAST:event_formWindowDeiconified
 
     private void formWindowIconified(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowIconified
         //pause the game when minimized
-        Main.pause();
+        World.pause();
     }//GEN-LAST:event_formWindowIconified
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
     public synchronized void processKeyInput(int keyCode, boolean pressed) {
+        lastKeyPressed = keyCode;
         switch (keyCode) {
+            //player movement
+            case VK_LEFT:
             case VK_A:  //left
                 keyLeft = pressed;
-                if (pressed) {
-                    player.faceDir(Player.LEFT);
-                }
+                dir = (pressed ? Player.LEFT : dir);
                 break;
+            case VK_RIGHT:
             case VK_D:  //right
                 keyRight = pressed;
-                if (pressed) {
-                    player.faceDir(Player.RIGHT);
-                }
+                dir = (pressed ? Player.RIGHT : dir);
                 break;
+            case VK_UP:
             case VK_W:  //up
                 keyUp = pressed;
-                if (pressed) {
-                    player.faceDir(Player.UP);
-                }
+                dir = (pressed ? Player.UP : dir);
                 break;
+            case VK_DOWN:
             case VK_S:  //down
                 keyDown = pressed;
-                if (pressed) {
-                    player.faceDir(Player.DOWN);
-                }
+                dir = (pressed ? Player.DOWN : dir);
                 break;
+            case VK_SHIFT:  //run and walk
+                PLAYER.setRunning(pressed);
+                break;
+            //other key functions
             default:
                 return;
         }
-        player.isMoving = !(keyUp == keyDown && keyLeft == keyRight);
+        if (keyLeft == keyRight && keyUp == keyDown) {
+            //keys are opposing, no movement or direction change
+            PLAYER.setMoving(false);
+        } else {
+            //valid key cases
+            int keysPressed = (keyLeft ? 1 : 0) + (keyRight ? 1 : 0) + (keyUp ? 1 : 0) + (keyDown ? 1 : 0);
+            if (keysPressed == 1) {
+                //1 key down
+                if (keyLeft) {
+                    dir = Player.LEFT;
+                } else if (keyRight) {
+                    dir = Player.RIGHT;
+                } else if (keyUp) {
+                    dir = Player.UP;
+                } else {
+                    dir = Player.DOWN;
+                }
+            } else if (keysPressed == 3) {
+                //3 keys down
+                if (keyLeft && keyRight) {
+                    dir = (keyUp ? Player.UP : Player.DOWN);
+                } else if (keyUp && keyDown) {
+                    dir = (keyLeft ? Player.LEFT : Player.RIGHT);
+                }
+            }
+            PLAYER.setFacingDirection(dir);
+            PLAYER.setMoving(true);
+        }
     }
 
     @Override
     public void run() {
         //constantly renders the screen image in accordance with FPS
+        this.getGraphics().setColor(Color.BLACK);
         while (true) {
-            synchronized (Main.worldImage) {
-                this.getGraphics().drawImage(Main.worldImage, 0, 0, null);
+            synchronized (World.class) {
+                this.getGraphics().drawImage(World.WORLD_IMAGE, 0, 0, null);
+                this.getGraphics().drawString("FPS: " + Main.SCREEN_FPS, 50, 50);
             }
             try {
                 Thread.sleep(1000 / Main.SCREEN_FPS);
@@ -154,6 +188,7 @@ public class Window extends javax.swing.JFrame implements Runnable {
     public void start() {
         if (thread == null) {
             thread = new Thread(this, "Screen Rendering");
+            thread.setPriority(Thread.MAX_PRIORITY);
             thread.start();
         }
     }
