@@ -70,7 +70,7 @@ public class Area {
                     player.setAnimating(true);
                 } else {
                     //can't move there
-                    //SoundSystem.playSound("collision.wav");    //Source: https://www.freesound.org/people/timgormly/sounds/170141/
+                    SoundSystem.playSound("collision.wav");    //Source: https://www.freesound.org/people/timgormly/sounds/170141/
                 }
             }
         }

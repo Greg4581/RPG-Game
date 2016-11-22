@@ -175,7 +175,6 @@ public class Window extends javax.swing.JFrame implements Runnable {
         while (true) {
             synchronized (World.class) {
                 this.getGraphics().drawImage(World.WORLD_IMAGE, 0, 0, null);
-                this.getGraphics().drawString("FPS: " + Main.SCREEN_FPS, 50, 50);
             }
             try {
                 Thread.sleep(1000 / Main.SCREEN_FPS);

@@ -32,7 +32,7 @@ public class Main {
         
         MAIN_WINDOW.setSize(WIDTH, HEIGHT);
         MAIN_WINDOW.setVisible(true);
-        BufferedImage title = Resource.loadImage("title.bmp");
+        BufferedImage title = Resource.loadImage("title.jpg");
         MAIN_WINDOW.getGraphics().drawImage(title, 0, 0, MAIN_WINDOW);  //display title image
 
         SoundSystem.initialize(new String[]{
